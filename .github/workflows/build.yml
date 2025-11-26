@@ -33,6 +33,17 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      # 🔹 Gerar e salvar chaves SNK (ANTES do build)
+      - name: Generate SNK keys
+        run: |
+          sn -k HartEngine.snk
+          sn -k LasecHartCommDTM.snk
+
+      - name: Move SNK to src folder
+        run: |
+          move HartEngine.snk src\
+          move LasecHartCommDTM.snk src\
+
       # 🔹 Restaurar projetos
       - name: Restore HartEngine
         run: dotnet restore src/HartEngine/HartEngine.csproj
@@ -40,14 +51,14 @@ jobs:
       - name: Restore LasecHartCommDTM
         run: dotnet restore src/LasecHartCommDTM/LasecHartCommDTM.csproj
 
-      # 🔹 Compilar (net48, C# moderno)
+      # 🔹 Compilar (AGORA COM STRONG NAME)
       - name: Build HartEngine
         run: dotnet build src/HartEngine/HartEngine.csproj -c Release
 
       - name: Build LasecHartCommDTM
         run: dotnet build src/LasecHartCommDTM/LasecHartCommDTM.csproj -c Release
 
-      # 🔹 Package DTM700 folder (estrutura PACTware)
+      # 🔹 Package DTM700 folder
       - name: Package DTM700 folder
         run: |
           mkdir artifacts
@@ -60,20 +71,16 @@ jobs:
           copy src\HartEngine\bin\Release\net48\HartEngine.dll artifacts\DTM700\JosueLab\LasecHartCommDTM\Dtm\
           copy src\LasecHartCommDTM\packaging\DeviceTypeCatalog.xml artifacts\DTM700\JosueLab\LasecHartCommDTM\
 
-      # 🔹 ZIP com a pasta DTM700 completa
+      # 🔹 ZIP DTM700
       - name: Zip DTM700
         run: |
           Compress-Archive -Path artifacts\DTM700\* -DestinationPath artifacts\LasecHartCommDTM-DTM700-${{ github.event.inputs.version }}.zip
 
-      # 🔹 Instalar WiX Toolset (para gerar MSI)
+      # 🔹 Instalar WiX
       - name: Install WiX Toolset
         run: choco install wixtoolset --yes --no-progress
 
-      # 🔹 Build MSI Installer (usa Product.wxs + OutputDir)
-      # - name: Build MSI Installer
-      #   run: |
-      #     candle.exe installer\Product.wxs -out installer\Product.wixobj -dOutputDir=artifacts\DTM700\JosueLab\LasecHartCommDTM
-      #     light.exe installer\Product.wixobj -out artifacts\LasecHartCommDTM-${{ github.event.inputs.version }}.msi
+      # 🔹 Build MSI
       - name: Build MSI Installer
         run: |
           candle.exe installer\Product.wxs `
@@ -85,8 +92,7 @@ jobs:
             -out artifacts\LasecHartCommDTM-${{ github.event.inputs.version }}.msi `
             -ext WixUIExtension
 
-
-      # 🔹 Upload artefatos (CI)
+      # 🔹 Upload artefatos
       - name: Upload DTM zip
         uses: actions/upload-artifact@v4
         with:
@@ -99,7 +105,7 @@ jobs:
           name: LasecHartCommDTM-${{ github.event.inputs.version }}.msi
           path: artifacts\LasecHartCommDTM-${{ github.event.inputs.version }}.msi
 
-      # 🔹 Criar TAG (se habilitado)
+      # 🔹 Criar TAG
       - name: Create Git Tag
         if: ${{ github.event.inputs.tag_repository == 'true' }}
         run: |
@@ -108,7 +114,7 @@ jobs:
           git tag ${{ github.event.inputs.version }}
           git push origin ${{ github.event.inputs.version }}
 
-      # 🔹 Criar Release e anexar ZIP + MSI (se habilitado)
+      # 🔹 Criar Release
       - name: Publish Release
         if: ${{ github.event.inputs.publish_release == 'true' }}
         uses: softprops/action-gh-release@v2

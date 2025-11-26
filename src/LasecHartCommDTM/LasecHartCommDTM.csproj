@@ -1,17 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
-    <AssemblyName>LasecHartCommDTM</AssemblyName>
-    <RootNamespace>LasecHartCommDTM</RootNamespace>
-    <UseWindowsForms>true</UseWindowsForms>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Platforms>AnyCPU</Platforms>
-    <Nullable>disable</Nullable>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\LasecHartCommDTM.snk</AssemblyOriginatorKeyFile>
+    <RegisterForComInterop>true</RegisterForComInterop>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HartEngine\HartEngine.csproj" />
+    <Reference Include="HartEngine">
+      <HintPath>..\HartEngine\bin\Release\net48\HartEngine.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

@@ -1,12 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
-    <AssemblyName>HartEngine</AssemblyName>
-    <RootNamespace>HartEngine</RootNamespace>
-    <Platforms>AnyCPU</Platforms>
-    <Nullable>disable</Nullable>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>   <!-- ADD ISTO -->
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\HartEngine.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="IChannel.cs" />
+    <Compile Include="SerialChannel.cs" />
+    <Compile Include="UdpChannel.cs" />
+    <Compile Include="ChannelManager.cs" />
+  </ItemGroup>
 
 </Project>
