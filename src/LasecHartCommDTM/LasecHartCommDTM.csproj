@@ -1,11 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 
+    <!-- Strong Name -->
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\LasecHartCommDTM.snk</AssemblyOriginatorKeyFile>
+
+    <!-- COM Visible -->
     <RegisterForComInterop>true</RegisterForComInterop>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <ItemGroup>

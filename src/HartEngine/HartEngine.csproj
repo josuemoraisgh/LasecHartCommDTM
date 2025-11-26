@@ -1,9 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 
+    <!-- Strong Name -->
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\HartEngine.snk</AssemblyOriginatorKeyFile>
+
+    <!-- COM-friendly configs (opcional) -->
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
   </PropertyGroup>
+
+  <!-- Não precisa de ItemGroup. O SDK inclui automaticamente todos os .cs -->
+  
 </Project>
