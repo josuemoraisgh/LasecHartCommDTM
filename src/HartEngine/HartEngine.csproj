@@ -6,12 +6,4 @@
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\HartEngine.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="IChannel.cs" />
-    <Compile Include="SerialChannel.cs" />
-    <Compile Include="UdpChannel.cs" />
-    <Compile Include="ChannelManager.cs" />
-  </ItemGroup>
-
 </Project>
