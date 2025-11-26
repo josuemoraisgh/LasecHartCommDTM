@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product
+      Id="*"
+      Name="Lasec HART Communication DTM"
+      Language="1033"
+      Version="1.0.0.0"
+      Manufacturer="JosueLab"
+      UpgradeCode="1F6D3983-1B43-4F41-9204-4FAE6E4F0010">
+
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+    <MediaTemplate />
+
+    <Feature Id="MainFeature" Title="Lasec HART Communication DTM" Level="1">
+      <ComponentGroupRef Id="DTMFiles" />
+    </Feature>
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFilesFolder">
+        <Directory Id="PACTWARE" Name="PACTware 5.0">
+          <Directory Id="DTM700" Name="DTM700">
+            <Directory Id="JosueLab" Name="JosueLab">
+              <Directory Id="LasecHartCommDTM" Name="LasecHartCommDTM">
+                <Directory Id="DTM" Name="Dtm">
+                  <Component Id="DTM_DLL" Guid="C4A111F0-A78C-4320-BBB7-34A93B910010">
+                    <File Id="LasecHartCommDTM" Source="$(var.OutputDir)\LasecHartCommDTM.dll" KeyPath="yes" />
+                    <File Id="HartEngine" Source="$(var.OutputDir)\HartEngine.dll" />
+                    <RegistryValue Root="HKLM" Key="Software\JosueLab\LasecHartCommDTM" Name="Installed" Type="integer" Value="1" KeyPath="yes"/>
+
+                    <!-- Register COM -->
+                    <ProgId Id="LasecHartCommDTM.ProgId"  
+                            Description="Lasec HART Communication DTM"  
+                            ClassId="{B4B6B3E7-639D-460B-B9A0-6C7F7EB20010}" />
+
+                  </Component>
+                </Directory>
+
+                <Component Id="XML_FILE" Guid="C4A111F0-A78C-4320-BBB7-34A93B910011">
+                  <File Id="DeviceTypeCatalog" Source="$(var.OutputDir)\DeviceTypeCatalog.xml" KeyPath="yes" />
+                </Component>
+
+              </Directory>
+            </Directory>
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <!-- Unregister on uninstall -->
+    <CustomAction Id="UnregisterDTM" Directory="DTM" Execute="deferred"
+                  ExeCommand='regasm.exe /u "[#LasecHartCommDTM]"' Return="ignore"/>
+    
+    <InstallExecuteSequence>
+      <Custom Action="UnregisterDTM" Before="RemoveFiles">Installed</Custom>
+    </InstallExecuteSequence>
+
+  </Product>
+</Wix>

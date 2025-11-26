@@ -4,9 +4,10 @@
     <TargetFramework>net48</TargetFramework>
     <AssemblyName>HartEngine</AssemblyName>
     <RootNamespace>HartEngine</RootNamespace>
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Platforms>AnyCPU</Platforms>
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
 </Project>
+

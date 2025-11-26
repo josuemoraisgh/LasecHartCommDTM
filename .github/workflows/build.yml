@@ -57,40 +57,61 @@ jobs:
           copy src\LasecHartCommDTM\bin\Release\LasecHartCommDTM.dll artifacts\DTM700\JosueLab\LasecHartCommDTM\Dtm\
           copy src\LasecHartCommDTM\packaging\DeviceTypeCatalog.xml artifacts\DTM700\JosueLab\LasecHartCommDTM\
 
-      - name: Upload DTM artifact
+      # 🔹 Zip do pacote DTM
+      - name: Zip DTM700
+        run: |
+          Compress-Archive -Path artifacts\DTM700\* -DestinationPath artifacts\LasecHartCommDTM-DTM700-${{ github.event.inputs.version }}.zip
+
+      # 🔹 Compilar Instalador MSI
+      - name: Install WiX Toolset
+        run: choco install wixtoolset --yes
+
+      - name: Build MSI Installer
+        run: |
+          candle.exe installer\Product.wxs -out installer\Product.wixobj -dOutputDir=artifacts\DTM700\JosueLab\LasecHartCommDTM
+          light.exe installer\Product.wixobj -out artifacts\LasecHartCommDTM-${{ github.event.inputs.version }}.msi
+
+      # 🔹 Upload de artefatos (CI)
+      - name: Upload DTM zip
         uses: actions/upload-artifact@v4
         with:
-          name: LasecHartCommDTM-DTM700
-          path: artifacts\DTM700
+          name: LasecHartCommDTM-DTM700-${{ github.event.inputs.version }}
+          path: artifacts\LasecHartCommDTM-DTM700-${{ github.event.inputs.version }}.zip
+
+      - name: Upload MSI Installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: LasecHartCommDTM-${{ github.event.inputs.version }}.msi
+          path: artifacts\LasecHartCommDTM-${{ github.event.inputs.version }}.msi
 
       # -----------------------------
       # 🔹 Criar TAG (se habilitado)
       # -----------------------------
       - name: Create Git Tag
-        if: ${{ inputs.tag_repository == 'true' }}
+        if: ${{ github.event.inputs.tag_repository == 'true' }}
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          
-          git tag ${{ inputs.version }}
-          git push origin ${{ inputs.version }}
+          git tag ${{ github.event.inputs.version }}
+          git push origin ${{ github.event.inputs.version }}
 
       # -----------------------------------------------------
-      # 🔹 Criar Release e anexar artefato (se habilitado)
+      # 🔹 Criar Release e anexar artefatos (se habilitado)
       # -----------------------------------------------------
       - name: Publish Release
-        if: ${{ inputs.publish_release == 'true' }}
+        if: ${{ github.event.inputs.publish_release == 'true' }}
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ inputs.version }}
-          name: "Lasec HART Communication DTM ${{ inputs.version }}"
+          tag_name: ${{ github.event.inputs.version }}
+          name: "Lasec HART Communication DTM ${{ github.event.inputs.version }}"
           body: |
             **Lasec HART Communication DTM**
-
-            Versão: ${{ inputs.version }}
-
-            Este release contém o pacote DTM700 funcional.
+            Versão: ${{ github.event.inputs.version }}
+            Este release contém:
+            - Pacote DTM700
+            - Instalador MSI para PACTware
           files: |
-            artifacts/DTM700/**/*
+            artifacts/LasecHartCommDTM-DTM700-${{ github.event.inputs.version }}.zip
+            artifacts/LasecHartCommDTM-${{ github.event.inputs.version }}.msi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
