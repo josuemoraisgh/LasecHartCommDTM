@@ -1,60 +1,17 @@
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F40A155D-6B5F-4C66-A8CD-991E5F770010}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>LasecHartCommDTM</RootNamespace>
+    <TargetFramework>net48</TargetFramework>
     <AssemblyName>LasecHartCommDTM</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <RegisterForComInterop>true</RegisterForComInterop>
-  </PropertyGroup>
-
-  <!-- Debug Mode -->
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <RegisterForComInterop>true</RegisterForComInterop>
-  </PropertyGroup>
-
-  <!-- Release Mode -->
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <RegisterForComInterop>true</RegisterForComInterop>
+    <RootNamespace>LasecHartCommDTM</RootNamespace>
+    <UseWindowsForms>true</UseWindowsForms>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Platforms>AnyCPU</Platforms>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Windows.Forms" />
+    <ProjectReference Include="..\HartEngine\HartEngine.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="CommDtm.cs" />
-    <Compile Include="DtmView.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="FdtInterfaces\IDtm.cs" />
-    <Compile Include="FdtInterfaces\ICommChannel.cs" />
-    <Compile Include="FdtInterfaces\IDtmView.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\HartEngine\HartEngine.csproj">
-      <Project>{A2399275-14CD-4F86-BEED-9A9D3F7F1111}</Project>
-      <Name>HartEngine</Name>
-    </ProjectReference>
-  </ItemGroup>
-
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 
 </Project>

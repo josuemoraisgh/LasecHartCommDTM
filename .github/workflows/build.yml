@@ -9,10 +9,12 @@ on:
         type: string
       tag_repository:
         description: "Criar e enviar tag?"
+        required: true
         default: true
         type: boolean
       publish_release:
         description: "Publicar Release?"
+        required: true
         default: true
         type: boolean
 
@@ -38,16 +40,14 @@ jobs:
       - name: Restore LasecHartCommDTM
         run: dotnet restore src/LasecHartCommDTM/LasecHartCommDTM.csproj
 
-      # 🔹 Compilar
+      # 🔹 Compilar (net48, C# moderno)
       - name: Build HartEngine
-        run: 'C:\Windows\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe src\HartEngine\HartEngine.csproj /p:Configuration=Release'
-
+        run: dotnet build src/HartEngine/HartEngine.csproj -c Release
 
       - name: Build LasecHartCommDTM
-        run: 'C:\Windows\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe src\LasecHartCommDTM\LasecHartCommDTM.csproj /p:Configuration=Release'
+        run: dotnet build src/LasecHartCommDTM/LasecHartCommDTM.csproj -c Release
 
-
-      # 🔹 Gerar artefato DTM700
+      # 🔹 Package DTM700 folder (estrutura PACTware)
       - name: Package DTM700 folder
         run: |
           mkdir artifacts
@@ -56,24 +56,26 @@ jobs:
           mkdir artifacts\DTM700\JosueLab\LasecHartCommDTM
           mkdir artifacts\DTM700\JosueLab\LasecHartCommDTM\Dtm
 
-          copy src\LasecHartCommDTM\bin\Release\LasecHartCommDTM.dll artifacts\DTM700\JosueLab\LasecHartCommDTM\Dtm\
+          copy src\LasecHartCommDTM\bin\Release\net48\LasecHartCommDTM.dll artifacts\DTM700\JosueLab\LasecHartCommDTM\Dtm\
+          copy src\HartEngine\bin\Release\net48\HartEngine.dll artifacts\DTM700\JosueLab\LasecHartCommDTM\Dtm\
           copy src\LasecHartCommDTM\packaging\DeviceTypeCatalog.xml artifacts\DTM700\JosueLab\LasecHartCommDTM\
 
-      # 🔹 Zip do pacote DTM
+      # 🔹 ZIP com a pasta DTM700 completa
       - name: Zip DTM700
         run: |
           Compress-Archive -Path artifacts\DTM700\* -DestinationPath artifacts\LasecHartCommDTM-DTM700-${{ github.event.inputs.version }}.zip
 
-      # 🔹 Compilar Instalador MSI
+      # 🔹 Instalar WiX Toolset (para gerar MSI)
       - name: Install WiX Toolset
-        run: choco install wixtoolset --yes
+        run: choco install wixtoolset --yes --no-progress
 
+      # 🔹 Build MSI Installer (usa Product.wxs + OutputDir)
       - name: Build MSI Installer
         run: |
           candle.exe installer\Product.wxs -out installer\Product.wixobj -dOutputDir=artifacts\DTM700\JosueLab\LasecHartCommDTM
           light.exe installer\Product.wixobj -out artifacts\LasecHartCommDTM-${{ github.event.inputs.version }}.msi
 
-      # 🔹 Upload de artefatos (CI)
+      # 🔹 Upload artefatos (CI)
       - name: Upload DTM zip
         uses: actions/upload-artifact@v4
         with:
@@ -86,9 +88,7 @@ jobs:
           name: LasecHartCommDTM-${{ github.event.inputs.version }}.msi
           path: artifacts\LasecHartCommDTM-${{ github.event.inputs.version }}.msi
 
-      # -----------------------------
       # 🔹 Criar TAG (se habilitado)
-      # -----------------------------
       - name: Create Git Tag
         if: ${{ github.event.inputs.tag_repository == 'true' }}
         run: |
@@ -97,9 +97,7 @@ jobs:
           git tag ${{ github.event.inputs.version }}
           git push origin ${{ github.event.inputs.version }}
 
-      # -----------------------------------------------------
-      # 🔹 Criar Release e anexar artefatos (se habilitado)
-      # -----------------------------------------------------
+      # 🔹 Criar Release e anexar ZIP + MSI (se habilitado)
       - name: Publish Release
         if: ${{ github.event.inputs.publish_release == 'true' }}
         uses: softprops/action-gh-release@v2
@@ -109,9 +107,10 @@ jobs:
           body: |
             **Lasec HART Communication DTM**
             Versão: ${{ github.event.inputs.version }}
+
             Este release contém:
-            - Pacote DTM700
-            - Instalador MSI para PACTware
+            - Pacote DTM700 pronto para PACTware
+            - Instalador MSI que copia para a pasta certa e registra COM
           files: |
             artifacts/LasecHartCommDTM-DTM700-${{ github.event.inputs.version }}.zip
             artifacts/LasecHartCommDTM-${{ github.event.inputs.version }}.msi

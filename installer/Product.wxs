@@ -8,37 +8,43 @@
       Manufacturer="JosueLab"
       UpgradeCode="1F6D3983-1B43-4F41-9204-4FAE6E4F0010">
 
-    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+    <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" />
 
     <MediaTemplate />
 
-    <Feature Id="MainFeature" Title="Lasec HART Communication DTM" Level="1">
-      <ComponentGroupRef Id="DTMFiles" />
-    </Feature>
-
+    <!-- Diretórios de instalação -->
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFilesFolder">
         <Directory Id="PACTWARE" Name="PACTware 5.0">
           <Directory Id="DTM700" Name="DTM700">
             <Directory Id="JosueLab" Name="JosueLab">
               <Directory Id="LasecHartCommDTM" Name="LasecHartCommDTM">
+
+                <!-- DeviceTypeCatalog.xml na raiz da pasta do DTM -->
+                <Component Id="DeviceTypeCatalogComponent" Guid="C4A111F0-A78C-4320-BBB7-34A93B910011">
+                  <File Id="DeviceTypeCatalog"
+                        Source="$(var.OutputDir)\DeviceTypeCatalog.xml"
+                        KeyPath="yes" />
+                </Component>
+
+                <!-- Subpasta Dtm com as DLLs -->
                 <Directory Id="DTM" Name="Dtm">
-                  <Component Id="DTM_DLL" Guid="C4A111F0-A78C-4320-BBB7-34A93B910010">
-                    <File Id="LasecHartCommDTM" Source="$(var.OutputDir)\LasecHartCommDTM.dll" KeyPath="yes" />
-                    <File Id="HartEngine" Source="$(var.OutputDir)\HartEngine.dll" />
-                    <RegistryValue Root="HKLM" Key="Software\JosueLab\LasecHartCommDTM" Name="Installed" Type="integer" Value="1" KeyPath="yes"/>
+                  <Component Id="DTMFilesComponent" Guid="C4A111F0-A78C-4320-BBB7-34A93B910010">
+                    <File Id="LasecHartCommDTMFile"
+                          Source="$(var.OutputDir)\Dtm\LasecHartCommDTM.dll"
+                          KeyPath="yes" />
+                    <File Id="HartEngineFile"
+                          Source="$(var.OutputDir)\Dtm\HartEngine.dll" />
 
-                    <!-- Register COM -->
-                    <ProgId Id="LasecHartCommDTM.ProgId"  
-                            Description="Lasec HART Communication DTM"  
-                            ClassId="{B4B6B3E7-639D-460B-B9A0-6C7F7EB20010}" />
-
+                    <!-- Chave de registro apenas para ter KeyPath -->
+                    <RegistryValue Root="HKLM"
+                                   Key="Software\JosueLab\LasecHartCommDTM"
+                                   Name="Installed"
+                                   Type="integer"
+                                   Value="1"
+                                   KeyPath="no" />
                   </Component>
                 </Directory>
-
-                <Component Id="XML_FILE" Guid="C4A111F0-A78C-4320-BBB7-34A93B910011">
-                  <File Id="DeviceTypeCatalog" Source="$(var.OutputDir)\DeviceTypeCatalog.xml" KeyPath="yes" />
-                </Component>
 
               </Directory>
             </Directory>
@@ -47,12 +53,41 @@
       </Directory>
     </Directory>
 
-    <!-- Unregister on uninstall -->
-    <CustomAction Id="UnregisterDTM" Directory="DTM" Execute="deferred"
-                  ExeCommand='regasm.exe /u "[#LasecHartCommDTM]"' Return="ignore"/>
-    
+    <!-- Group para facilitar -->
+    <ComponentGroup Id="DTMFiles">
+      <ComponentRef Id="DeviceTypeCatalogComponent" />
+      <ComponentRef Id="DTMFilesComponent" />
+    </ComponentGroup>
+
+    <!-- Feature principal -->
+    <Feature Id="MainFeature" Title="Lasec HART Communication DTM" Level="1">
+      <ComponentGroupRef Id="DTMFiles" />
+    </Feature>
+
+    <!-- Custom actions para regasm -->
+
+    <!-- Registrar COM na instalação -->
+    <CustomAction Id="RegisterDTM"
+                  Directory="DTM"
+                  ExeCommand='regasm.exe "[#LasecHartCommDTMFile]" /codebase'
+                  Execute="deferred"
+                  Return="check"
+                  Impersonate="no" />
+
+    <!-- Desregistrar COM na desinstalação -->
+    <CustomAction Id="UnregisterDTM"
+                  Directory="DTM"
+                  ExeCommand='regasm.exe /u "[#LasecHartCommDTMFile]"'
+                  Execute="deferred"
+                  Return="ignore"
+                  Impersonate="no" />
+
     <InstallExecuteSequence>
-      <Custom Action="UnregisterDTM" Before="RemoveFiles">Installed</Custom>
+      <!-- Registrar depois que os arquivos forem copiados -->
+      <Custom Action="RegisterDTM" After="InstallFiles">NOT Installed</Custom>
+
+      <!-- Desregistrar antes de remover os arquivos (na desinstalação) -->
+      <Custom Action="UnregisterDTM" Before="RemoveFiles">Installed AND NOT UPGRADINGPRODUCTCODE</Custom>
     </InstallExecuteSequence>
 
   </Product>
