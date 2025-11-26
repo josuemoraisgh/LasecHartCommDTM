@@ -33,6 +33,37 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      #######################################################################
+      # 🔍 LOCALIZAR SN.EXE AUTOMATICAMENTE
+      #######################################################################
+      - name: Locate sn.exe
+        id: find_sn
+        shell: pwsh
+        run: |
+          $sn = Get-ChildItem "C:\Program Files (x86)\Microsoft SDKs\Windows" `
+                -Recurse -Filter sn.exe -ErrorAction SilentlyContinue `
+                | Select-Object -First 1 -ExpandProperty FullName
+
+          if (-not $sn) {
+            Write-Host "::error::sn.exe não encontrado no runner!"
+            exit 1
+          }
+
+          Write-Host "sn.exe encontrado em: $sn"
+          echo "sn_path=$sn" >> $env:GITHUB_ENV
+      #######################################################################
+
+
+      #######################################################################
+      # 🔑 GERAR CHAVES (PODE DESCOMENTAR QUANDO QUISER GERAR UM PAR NOVO)
+      #######################################################################
+      # - name: Generate SNK keys
+      #   shell: pwsh
+      #   run: |
+      #     & $env:sn_path -k src/HartEngine/HartEngine.snk
+      #     & $env:sn_path -k src/LasecHartCommDTM/LasecHartCommDTM.snk
+      #######################################################################
+
       # 🔹 Restaurar projetos
       - name: Restore HartEngine
         run: dotnet restore src/HartEngine/HartEngine.csproj
@@ -40,7 +71,7 @@ jobs:
       - name: Restore LasecHartCommDTM
         run: dotnet restore src/LasecHartCommDTM/LasecHartCommDTM.csproj
 
-      # 🔹 Compilar (AGORA COM STRONG NAME)
+      # 🔹 Compilar (com strong name já no csproj)
       - name: Build HartEngine
         run: dotnet build src/HartEngine/HartEngine.csproj -c Release
 
@@ -55,12 +86,11 @@ jobs:
           mkdir artifacts\DTM700\JosueLab
           mkdir artifacts\DTM700\JosueLab\LasecHartCommDTM
           mkdir artifacts\DTM700\JosueLab\LasecHartCommDTM\Dtm
-
           copy src\LasecHartCommDTM\bin\Release\net48\LasecHartCommDTM.dll artifacts\DTM700\JosueLab\LasecHartCommDTM\Dtm\
           copy src\HartEngine\bin\Release\net48\HartEngine.dll artifacts\DTM700\JosueLab\LasecHartCommDTM\Dtm\
           copy src\LasecHartCommDTM\packaging\DeviceTypeCatalog.xml artifacts\DTM700\JosueLab\LasecHartCommDTM\
 
-      # 🔹 ZIP DTM700
+      # 🔹 ZIP
       - name: Zip DTM700
         run: |
           Compress-Archive -Path artifacts\DTM700\* -DestinationPath artifacts\LasecHartCommDTM-DTM700-${{ github.event.inputs.version }}.zip
@@ -116,7 +146,8 @@ jobs:
 
             Este release contém:
             - Pacote DTM700 pronto para PACTware
-            - Instalador MSI que copia para a pasta certa e registra COM
+            - Instalador MSI que copia corretamente e registra COM
+
           files: |
             artifacts/LasecHartCommDTM-DTM700-${{ github.event.inputs.version }}.zip
             artifacts/LasecHartCommDTM-${{ github.event.inputs.version }}.msi
