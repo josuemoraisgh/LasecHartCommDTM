@@ -10,7 +10,7 @@
 
     <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" />
 
-    <MediaTemplate />
+    <MediaTemplate Cabinet="product.cab" EmbedCab="yes" />
 
     <!-- Diretórios de instalação -->
     <Directory Id="TARGETDIR" Name="SourceDir">

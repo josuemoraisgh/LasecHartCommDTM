@@ -73,11 +73,7 @@ jobs:
       - name: Build MSI Installer
         run: |
           candle.exe installer\Product.wxs -out installer\Product.wixobj -dOutputDir=artifacts\DTM700\JosueLab\LasecHartCommDTM
-          light.exe installer\Product.wixobj `
-            -out artifacts\LasecHartCommDTM-${{ github.event.inputs.version }}.msi `
-            -b artifacts\DTM700\JosueLab\LasecHartCommDTM
-
-
+          light.exe installer\Product.wixobj -out artifacts\LasecHartCommDTM-${{ github.event.inputs.version }}.msi
 
       # 🔹 Upload artefatos (CI)
       - name: Upload DTM zip
