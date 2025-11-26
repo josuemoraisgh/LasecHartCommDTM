@@ -9,7 +9,6 @@
       Manufacturer="JosueLab"
       UpgradeCode="1F6D3983-1B43-4F41-9204-4FAE6E4F0010">
 
-    <!-- ELEVAÇÃO DE PERMISSÃO — ESSENCIAL -->
     <Package InstallerVersion="500"
              Compressed="yes"
              InstallScope="perMachine"
@@ -17,8 +16,8 @@
 
     <MediaTemplate EmbedCab="yes" />
 
-    <!-- Interface gráfica padrão -->
-    <UIRef Id="WixUI_InstallDir"/>
+    <!-- UI estável sem INSTALLDIR -->
+    <UIRef Id="WixUI_Minimal"/>
     <UIRef Id="WixUI_ErrorProgressText"/>
 
     <!-- ================================================================
@@ -41,6 +40,7 @@
                 <Directory Id="DTM" Name="Dtm">
                   <Component Id="DTMFilesComponent"
                              Guid="C4A111F0-A78C-4320-BBB7-34A93B910010">
+
                     <File Id="LasecHartCommDTMFile"
                           Source="$(var.OutputDir)\Dtm\LasecHartCommDTM.dll"
                           KeyPath="yes"/>
@@ -71,8 +71,7 @@
       <ComponentRef Id="DTMFilesComponent"/>
     </ComponentGroup>
 
-
-    <!-- Feature -->
+    <!-- FEATURE -->
     <Feature Id="MainFeature"
              Title="Lasec HART Communication DTM"
              Level="1">
@@ -81,10 +80,9 @@
 
 
     <!-- ================================================================
-         Custom Actions — agora com permissão elevada
+         Custom Actions — com permissão elevada
          ================================================================ -->
 
-    <!-- Registrar COM -->
     <CustomAction Id="RegisterDTM"
                   Directory="DTM"
                   Execute="deferred"
@@ -92,7 +90,6 @@
                   Return="check"
                   ExeCommand='"[WindowsFolder]Microsoft.NET\Framework64\v4.0.30319\regasm.exe" "[#LasecHartCommDTMFile]" /codebase'/>
 
-    <!-- Desregistrar COM -->
     <CustomAction Id="UnregisterDTM"
                   Directory="DTM"
                   Execute="deferred"
