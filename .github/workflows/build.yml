@@ -33,17 +33,6 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
-      # 🔹 Gerar e salvar chaves SNK (ANTES do build)
-      - name: Generate SNK keys
-        run: |
-          sn -k HartEngine.snk
-          sn -k LasecHartCommDTM.snk
-
-      - name: Move SNK to src folder
-        run: |
-          move HartEngine.snk src\
-          move LasecHartCommDTM.snk src\
-
       # 🔹 Restaurar projetos
       - name: Restore HartEngine
         run: dotnet restore src/HartEngine/HartEngine.csproj
