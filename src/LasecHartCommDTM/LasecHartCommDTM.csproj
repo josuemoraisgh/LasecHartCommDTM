@@ -5,7 +5,7 @@
 
     <!-- Strong Name -->
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\LasecHartCommDTM.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>LasecHartCommDTM.snk</AssemblyOriginatorKeyFile>
 
     <!-- COM Visible -->
     <RegisterForComInterop>true</RegisterForComInterop>

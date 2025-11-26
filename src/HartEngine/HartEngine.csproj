@@ -5,7 +5,7 @@
 
     <!-- Strong Name -->
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\HartEngine.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>HartEngine.snk</AssemblyOriginatorKeyFile>
 
     <!-- COM-friendly configs (opcional) -->
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
