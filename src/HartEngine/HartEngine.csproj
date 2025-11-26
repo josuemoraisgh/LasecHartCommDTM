@@ -6,6 +6,7 @@
     <RootNamespace>HartEngine</RootNamespace>
     <Platforms>AnyCPU</Platforms>
     <Nullable>disable</Nullable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>   <!-- ADD ISTO -->
   </PropertyGroup>
 
 </Project>
