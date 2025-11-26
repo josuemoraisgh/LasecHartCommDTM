@@ -1,13 +1,32 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <OutputType>Library</OutputType>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <AssemblyName>HartEngine</AssemblyName>
     <RootNamespace>HartEngine</RootNamespace>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <Platforms>AnyCPU</Platforms>
-    <Nullable>disable</Nullable>
   </PropertyGroup>
 
-</Project>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.IO" />
+    <Reference Include="System.Runtime" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
+  </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="IChannel.cs" />
+    <Compile Include="SerialChannel.cs" />
+    <Compile Include="UdpChannel.cs" />
+    <Compile Include="ChannelManager.cs" />
+  </ItemGroup>
+
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
+</Project>
