@@ -9,13 +9,20 @@
       Manufacturer="JosueLab"
       UpgradeCode="1F6D3983-1B43-4F41-9204-4FAE6E4F0010">
 
-    <Package InstallerVersion="500" Compressed="yes" InstallScope="perMachine" />
+    <!-- ELEVAÇÃO DE PERMISSÃO — ESSENCIAL -->
+    <Package InstallerVersion="500"
+             Compressed="yes"
+             InstallScope="perMachine"
+             InstallPrivileges="elevated" />
 
-    <!-- EMBUTE O CAB DENTRO DO MSI (solução definitiva para cab1.cab) -->
     <MediaTemplate EmbedCab="yes" />
 
+    <!-- Interface gráfica padrão -->
+    <UIRef Id="WixUI_InstallDir"/>
+    <UIRef Id="WixUI_ErrorProgressText"/>
+
     <!-- ================================================================
-         ESTRUTURA DE DIRETÓRIOS
+         Diretórios
          ================================================================ -->
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="ProgramFilesFolder">
@@ -24,7 +31,6 @@
             <Directory Id="JosueLab" Name="JosueLab">
               <Directory Id="LasecHartCommDTM" Name="LasecHartCommDTM">
 
-                <!-- DeviceTypeCatalog.xml -->
                 <Component Id="DeviceTypeCatalogComponent"
                            Guid="C4A111F0-A78C-4320-BBB7-34A93B910011">
                   <File Id="DeviceTypeCatalog"
@@ -32,21 +38,16 @@
                         KeyPath="yes"/>
                 </Component>
 
-                <!-- SUBPASTA /Dtm COM AS DLLs -->
                 <Directory Id="DTM" Name="Dtm">
                   <Component Id="DTMFilesComponent"
                              Guid="C4A111F0-A78C-4320-BBB7-34A93B910010">
-
-                    <!-- DTM principal -->
                     <File Id="LasecHartCommDTMFile"
                           Source="$(var.OutputDir)\Dtm\LasecHartCommDTM.dll"
                           KeyPath="yes"/>
 
-                    <!-- Motor de Comunicação -->
                     <File Id="HartEngineFile"
                           Source="$(var.OutputDir)\Dtm\HartEngine.dll"/>
 
-                    <!-- KeyPath auxiliar -->
                     <RegistryValue Root="HKLM"
                                    Key="Software\JosueLab\LasecHartCommDTM"
                                    Name="Installed"
@@ -63,13 +64,15 @@
       </Directory>
     </Directory>
 
+
     <!-- Agrupamento -->
     <ComponentGroup Id="DTMFiles">
       <ComponentRef Id="DeviceTypeCatalogComponent"/>
       <ComponentRef Id="DTMFilesComponent"/>
     </ComponentGroup>
 
-    <!-- FEATURE PRINCIPAL -->
+
+    <!-- Feature -->
     <Feature Id="MainFeature"
              Title="Lasec HART Communication DTM"
              Level="1">
@@ -78,7 +81,7 @@
 
 
     <!-- ================================================================
-         CUSTOM ACTIONS — VERSÃO 64-BIT (regasm correto)
+         Custom Actions — agora com permissão elevada
          ================================================================ -->
 
     <!-- Registrar COM -->
@@ -97,7 +100,6 @@
                   Return="ignore"
                   ExeCommand='"[WindowsFolder]Microsoft.NET\Framework64\v4.0.30319\regasm.exe" /u "[#LasecHartCommDTMFile]"'/>
 
-    <!-- ORDEM DE EXECUÇÃO -->
     <InstallExecuteSequence>
       <Custom Action="RegisterDTM" After="InstallFiles">NOT Installed</Custom>
       <Custom Action="UnregisterDTM" Before="RemoveFiles">Installed AND NOT UPGRADINGPRODUCTCODE</Custom>
