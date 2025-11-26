@@ -40,10 +40,12 @@ jobs:
 
       # 🔹 Compilar
       - name: Build HartEngine
-        run: dotnet build src/HartEngine/HartEngine.csproj -c Release
+        run: 'C:\Windows\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe src\HartEngine\HartEngine.csproj /p:Configuration=Release'
+
 
       - name: Build LasecHartCommDTM
-        run: dotnet build src/LasecHartCommDTM/LasecHartCommDTM.csproj -c Release
+        run: 'C:\Windows\Microsoft.NET\Framework64\v4.0.30319\MSBuild.exe src\LasecHartCommDTM\LasecHartCommDTM.csproj /p:Configuration=Release'
+
 
       # 🔹 Gerar artefato DTM700
       - name: Package DTM700 folder

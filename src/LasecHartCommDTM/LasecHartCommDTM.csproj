@@ -9,7 +9,6 @@
     <Nullable>disable</Nullable>
     <OutputType>Library</OutputType>
     <UseWindowsForms>true</UseWindowsForms>
-    <RegisterForComInterop>true</RegisterForComInterop>
   </PropertyGroup>
 
   <ItemGroup>
