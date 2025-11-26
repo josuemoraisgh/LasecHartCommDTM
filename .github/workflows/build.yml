@@ -70,10 +70,21 @@ jobs:
         run: choco install wixtoolset --yes --no-progress
 
       # 🔹 Build MSI Installer (usa Product.wxs + OutputDir)
+      # - name: Build MSI Installer
+      #   run: |
+      #     candle.exe installer\Product.wxs -out installer\Product.wixobj -dOutputDir=artifacts\DTM700\JosueLab\LasecHartCommDTM
+      #     light.exe installer\Product.wixobj -out artifacts\LasecHartCommDTM-${{ github.event.inputs.version }}.msi
       - name: Build MSI Installer
         run: |
-          candle.exe installer\Product.wxs -out installer\Product.wixobj -dOutputDir=artifacts\DTM700\JosueLab\LasecHartCommDTM
-          light.exe installer\Product.wixobj -out artifacts\LasecHartCommDTM-${{ github.event.inputs.version }}.msi
+          candle.exe installer\Product.wxs `
+            -out installer\Product.wixobj `
+            -dOutputDir=artifacts\DTM700\JosueLab\LasecHartCommDTM `
+            -ext WixUIExtension
+
+          light.exe installer\Product.wixobj `
+            -out artifacts\LasecHartCommDTM-${{ github.event.inputs.version }}.msi `
+            -ext WixUIExtension
+
 
       # 🔹 Upload artefatos (CI)
       - name: Upload DTM zip
