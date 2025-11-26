@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>HartEngine</AssemblyName>
+    <RootNamespace>HartEngine</RootNamespace>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Platforms>AnyCPU</Platforms>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+
+</Project>

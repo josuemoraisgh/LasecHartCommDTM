@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DeviceTypeCatalog xmlns="http://www.fdtgroup.org/FDT/DeviceTypeCatalog">
+  <DeviceType
+      Id="JosueLab.LasecHartCommDTM"
+      DtmId="{B4B6B3E7-639D-460B-B9A0-6C7F7EB20010}"
+      Category="Communication"
+      Protocol="HART"
+      Vendor="JosueLab"
+      Version="1.0.0">
+    <DisplayName>Lasec HART Communication DTM</DisplayName>
+    <File>Dtm\LasecHartCommDTM.dll</File>
+  </DeviceType>
+</DeviceTypeCatalog>
