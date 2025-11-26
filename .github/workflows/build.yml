@@ -57,11 +57,11 @@ jobs:
       #######################################################################
       # 🔑 GERAR CHAVES (PODE DESCOMENTAR QUANDO QUISER GERAR UM PAR NOVO)
       #######################################################################
-      # - name: Generate SNK keys
-      #   shell: pwsh
-      #   run: |
-      #     & $env:sn_path -k src/HartEngine/HartEngine.snk
-      #     & $env:sn_path -k src/LasecHartCommDTM/LasecHartCommDTM.snk
+      - name: Generate SNK keys
+        shell: pwsh
+        run: |
+          & $env:sn_path -k src/HartEngine/HartEngine.snk
+          & $env:sn_path -k src/LasecHartCommDTM/LasecHartCommDTM.snk
       #######################################################################
 
       # 🔹 Restaurar projetos
