@@ -1,7 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
+
+    <!-- WinForms é obrigatório no DTM -->
+    <UseWindowsForms>true</UseWindowsForms>
 
     <!-- Strong Name -->
     <SignAssembly>true</SignAssembly>
@@ -13,9 +16,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Referência ao HartEngine -->
     <Reference Include="HartEngine">
       <HintPath>..\HartEngine\bin\Release\net48\HartEngine.dll</HintPath>
     </Reference>
+
+    <!-- Dependências WinForms explícitas -->
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System" />
   </ItemGroup>
 
 </Project>
