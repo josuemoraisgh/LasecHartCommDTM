@@ -9,10 +9,8 @@
     <!-- Strong Name -->
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>LasecHartCommDTM.snk</AssemblyOriginatorKeyFile>
-
-    <!-- REMOVE RegisterForComInterop (MSBuild Core não suporta) -->
-    <!-- O registro COM será feito SOMENTE no MSI via regasm -->
-
+    <!-- Garantir que o DTM é compilado como x86 (match com PACTware 32-bit) -->
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>

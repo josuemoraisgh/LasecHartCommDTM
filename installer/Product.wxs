@@ -80,22 +80,23 @@
 
 
     <!-- ================================================================
-         Custom Actions — com permissão elevada
-         ================================================================ -->
-
+    Custom Actions — com permissão elevada
+    ================================================================ -->
+    <!-- Registrar COM na visão 32-bits (WOW64), que é o que o PACTware 5.0 enxerga -->
     <CustomAction Id="RegisterDTM"
                   Directory="DTM"
                   Execute="deferred"
                   Impersonate="no"
                   Return="check"
-                  ExeCommand='"[WindowsFolder]Microsoft.NET\Framework64\v4.0.30319\regasm.exe" "[#LasecHartCommDTMFile]" /codebase'/>
+                  ExeCommand='"[WindowsFolder]Microsoft.NET\Framework\v4.0.30319\regasm.exe" /codebase "[#LasecHartCommDTMFile]"'/>
 
     <CustomAction Id="UnregisterDTM"
                   Directory="DTM"
                   Execute="deferred"
                   Impersonate="no"
                   Return="ignore"
-                  ExeCommand='"[WindowsFolder]Microsoft.NET\Framework64\v4.0.30319\regasm.exe" /u "[#LasecHartCommDTMFile]"'/>
+                  ExeCommand='"[WindowsFolder]Microsoft.NET\Framework\v4.0.30319\regasm.exe" /u "[#LasecHartCommDTMFile]"'/>
+
 
     <InstallExecuteSequence>
       <Custom Action="RegisterDTM" After="InstallFiles">NOT Installed</Custom>
