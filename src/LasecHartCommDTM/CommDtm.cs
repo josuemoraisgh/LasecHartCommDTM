@@ -1,6 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
-using Microsoft.Win32;   
+using Microsoft.Win32;
 using LasecHartCommDTM.FdtInterfaces;
 using HartEngine;
 
@@ -48,7 +48,6 @@ namespace LasecHartCommDTM
             vendor = "JosueLab";
             version = "1.0.0";
         }
-
 
         #endregion
 
@@ -116,69 +115,61 @@ namespace LasecHartCommDTM
             return n;
         }
 
-        #region COM / FDT registration helpers
+        #endregion
 
-        // Categoria COM FDT DTM (FDT 1.x)
+        // --------------------------------------------------------------------
+        // 🔥 REGISTRO FDT DTM (necessário para o PACTware encontrar o DTM)
+        // --------------------------------------------------------------------
+        #region COM_FDT_Registration
+
+        // Categoria COM FDT DTM oficial (FDT 1.x)
         private const string FdtDtmCategoryId = "{036D1490-387B-11D4-86E1-00E0987270B9}";
 
-        /// <summary>
-        /// Chamado automaticamente pelo RegAsm no momento do registro COM.
-        /// Adiciona o CLSID do CommDtm na categoria FDT DTM.
-        /// </summary>
         [ComRegisterFunction]
         public static void Register(Type t)
         {
-            // Caminho CLSID\{...}
-            string clsidKeyPath = @"CLSID\" + t.GUID.ToString("B");
-
-            using (var clsidKey = Registry.ClassesRoot.OpenSubKey(clsidKeyPath, writable: true))
+            try
             {
-                if (clsidKey == null)
-                    return;
+                string clsidKeyPath = @"CLSID\" + t.GUID.ToString("B");
 
-                // CLSID\{...}\Implemented Categories\{FdtDtmCategoryId}
-                using (var implCatKey = clsidKey.CreateSubKey(
-                           @"Implemented Categories\" + FdtDtmCategoryId))
+                using (var clsidKey = Registry.ClassesRoot.OpenSubKey(clsidKeyPath, writable: true))
                 {
-                    // valor default vazio é suficiente
+                    if (clsidKey != null)
+                    {
+                        clsidKey.CreateSubKey(@"Implemented Categories\" + FdtDtmCategoryId);
+                    }
+                }
+
+                using (var catKey = Registry.ClassesRoot.CreateSubKey(@"Component Categories\" + FdtDtmCategoryId))
+                {
+                    if (catKey != null)
+                        catKey.SetValue(null, "FDT DTM");
                 }
             }
-
-            // (Opcional) garante que a categoria exista com nome amigável
-            using (var catKey = Registry.ClassesRoot.CreateSubKey(
-                       @"Component Categories\" + FdtDtmCategoryId))
+            catch (Exception ex)
             {
-                if (catKey != null)
-                {
-                    catKey.SetValue(null, "FDT DTM");
-                }
+                throw new ApplicationException("Erro ao registrar categoria FDT DTM: " + ex.Message);
             }
         }
 
-        /// <summary>
-        /// Chamado automaticamente pelo RegAsm no momento do un-register.
-        /// Remove o CLSID da categoria FDT DTM.
-        /// </summary>
         [ComUnregisterFunction]
         public static void Unregister(Type t)
         {
-            string clsidKeyPath = @"CLSID\" + t.GUID.ToString("B");
-
-            using (var clsidKey = Registry.ClassesRoot.OpenSubKey(clsidKeyPath, writable: true))
+            try
             {
-                if (clsidKey == null)
-                    return;
+                string clsidKeyPath = @"CLSID\" + t.GUID.ToString("B");
 
-                try
+                using (var clsidKey = Registry.ClassesRoot.OpenSubKey(clsidKeyPath, writable: true))
                 {
-                    clsidKey.DeleteSubKeyTree(
-                        @"Implemented Categories\" + FdtDtmCategoryId,
-                        throwOnMissingSubKey: false);
+                    if (clsidKey != null)
+                    {
+                        clsidKey.DeleteSubKeyTree(@"Implemented Categories\" + FdtDtmCategoryId, throwOnMissingSubKey: false);
+                    }
                 }
-                catch
-                {
-                    // ignora erro se já não existir
-                }
+            }
+            catch
+            {
+                // silenciosamente ignora falhas
             }
         }
 
