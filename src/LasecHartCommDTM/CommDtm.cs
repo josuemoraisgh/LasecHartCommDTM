@@ -1,9 +1,17 @@
 using System;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
+using Fdt = FDT.Interfaces;
 using LasecHartCommDTM.FdtInterfaces;
 using HartEngine;
 
+public class CommDtm :
+    Fdt.IDtm,
+    Fdt.IDtm2,
+    Fdt.IDtmInformation,
+    Fdt.IDtmInformation2,
+    ICommChannel
+    
 namespace LasecHartCommDTM
 {
     [Guid("B4B6B3E7-639D-460B-B9A0-6C7F7EB20010")]
